@@ -1,0 +1,59 @@
+@import './config.scss';
+
+@mixin unselected {
+    -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none;
+}
+
+@mixin placeholder-color ($color) {
+    &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+        color:    $color;
+    }
+    &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+       color:   $color;
+       opacity:  1;
+    }
+    &::-moz-placeholder { /* Mozilla Firefox 19+ */
+       color:    $color;
+       opacity:  1;
+    }
+    &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+       color:    $color;
+    }
+    &::-ms-input-placeholder { /* Microsoft Edge */
+       color:    $color;
+    }
+    
+    &::placeholder { /* Most modern browsers support this now. */
+       color:    $color;
+    }
+}
+
+
+@mixin scroll
+{
+   /* W3C standard
+   сейчас только для Firefox */
+   & {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 64, 151) #181818;
+   }
+ 
+   /* для Chrome/Edge/Safari */
+   &::-webkit-scrollbar {
+      height: 12px;
+      width: 16px;
+   }
+   &::-webkit-scrollbar-track {
+      background: #181818;
+   }
+   &::-webkit-scrollbar-thumb {
+      background-color: rgb(255, 64, 151);
+      border-radius: 8px;
+      border: 6px solid #181818;
+   }
+}
