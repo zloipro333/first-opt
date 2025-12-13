@@ -56,14 +56,10 @@ function find(value) {
       <Logo @click='catalog.search = ""'/>
     </RouterLink>
 
-    <!-- <div class="Catalog-menu">
-
-          <a href="https://wiki-prfm.onrender.com/about">
-            <nobr>Условия</nobr>
-          </a> •
-          <a class="button" href="#" @click="priceModal.open()">Способы оплаты</a> •
-          <a class="button" :href="`${env.server}price/PRFM_${catalog._category}_${payment.currentMethod.name}.xlsx`">Скачать прайс</a>
-    </div> -->
+    <div class="Catalog-menu">
+      <a class="button" href="#" @click="priceModal.open()">Cпособ оплаты</a> •
+      <a class="button" :href="`${env.server}price/FirstOpt_${catalog._category}_${payment.currentMethod.name}.xlsx`">Скачать прайс</a>
+    </div> 
   </div>
 
  
@@ -104,16 +100,21 @@ function find(value) {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: -30px;
-    margin-bottom: 10px;
+    margin-top: -20px;
+    margin-bottom: 0px;
     font-size: 25px;
-    color: #777;
+    color: $color-content;
     a {
       font-size: 18px;
       padding: 8px 12px;
+      background: none;
       margin: 0 5px;
-      color: #fff;
+      color: $color-content;
       border-radius: 4px;
+    }
+    a:hover
+    {
+      background: $color-interface;
     }
   }
 

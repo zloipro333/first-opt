@@ -36,9 +36,9 @@ const route = useRoute()
   </div>
 
   <div class="Price" v-if="catalog.goods.length < 2300">
-    <Good class="Price-positioin" v-for="good in catalog.goods" :key="good.id" :positioin="good"/>
-    <br><br><br><br>
+    <Good class="Price-positioin" v-for="good in catalog.goods" :key="good.id" :positioin="good"/>   
   </div>
+  <br><br><br>
 </template>
 
 <style lang="scss" scoped>
