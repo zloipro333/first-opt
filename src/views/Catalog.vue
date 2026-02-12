@@ -58,7 +58,7 @@ function find(value) {
 
     <div class="Catalog-menu">
       <a class="button" href="#" @click="priceModal.open()">Cпособ оплаты</a> •
-      <a class="button" :href="`${env.server}price/FirstOpt_${catalog._category}_${payment.currentMethod.name}.xlsx`">Скачать прайс</a>
+      <a class="button" :href="`${env.server}price/file/first-opt_${payment.currentMethod.name}.xlsx`">Скачать прайс</a>
     </div> 
   </div>
 

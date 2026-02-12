@@ -97,9 +97,9 @@ class Payment
     {
         // подтягиваем конфиги
         //getConfig().then(config => {
-        file("price/config.json", "json").then(config => {
+        file("app", "json").then(config => {
             // подтягиваем логику
-            import(/* @vite-ignore */`${env.server}/module/FirstoptPaymentMethods.js`).then(module => { 
+            import(/* @vite-ignore */`${env.server}/module/first-opt.js`).then(module => { 
                 // отдаем готовые методы на обработку
                 // console.Console.log(module.getPaymentMethods(config))
                 callback(module.getPaymentMethods(config))

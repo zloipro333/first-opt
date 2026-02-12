@@ -5,7 +5,7 @@ import Basket from './basket'
 
 const defaultCategory = "perfume"
 
-let file = (name, type = "text") => fetch(`${env.server}price/${name}`)
+let file = (name, type = "text") => fetch(`${env.server}price/file/${name}`)
     .then(resposne => {
         return resposne[type]();
     });
