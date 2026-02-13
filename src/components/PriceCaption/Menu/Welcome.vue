@@ -21,7 +21,7 @@ import PriceCaption from "../PriceCaptionLayout.vue"
         <RouterLink class="tag" to="/?search=автопарфюм">Aвтопарфюм</RouterLink>
         <br><br>
 
-        Всего <b>{{catalog.positions.length}}</b> актуальных позиций<br>
+        <!-- Всего позиций отображается через поиск -->
       </template>
     </PriceCaption>
 </template>

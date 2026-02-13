@@ -7,12 +7,6 @@ import { round, numberRUFormat } from "./helpers";
 import payment from "./payment";
 
 
-let file = (name, type = "text") => fetch(`${env.server}/${name}`)
-    .then(resposne => {
-        return resposne[type]();
-    });
-
-
 const clearObject = obj => {
     for (let key in obj){
         if (obj.hasOwnProperty(key)){
@@ -154,29 +148,42 @@ export default class Basket
         localStorage.setItem("favorites", JSON.stringify(favorites))
     }
 
-    async restore (orderStorage = "basket")
-    {
+    async restore(orderStorage = "basket") {
         clearObject(this.positions)
 
-        let basket = JSON.parse(localStorage.getItem(orderStorage)) || []
-        let favorites = JSON.parse(localStorage.getItem("favorites")) || []
-        let content = basket.concat(favorites)
+        const basket = JSON.parse(localStorage.getItem(orderStorage)) || []
+        const favorites = JSON.parse(localStorage.getItem("favorites")) || []
+        const content = basket.concat(favorites)
 
-        let categories = Array.from(new Set(content.map(position => position.category || "perfume")))
+        if (content.length === 0) return
 
-        if (content)
-        return this.catalog.load(categories).then(() => {
-            content.forEach(position => {
-                let category = position.category || "perfume"
-                let actualPosition = this.catalog.prices[category].find(item => (item.id+"") === (position.id+""))
-                if (!position.oldPrice)
-                    position.oldPrice = position.price
-                position.price = actualPosition ? actualPosition.price : 0
-                this.positions[position.id] = new Good(this, position)
-            });
+        const base = (env.server || '').replace(/\/$/, '')
+        const fetchPosition = (id) =>
+            fetch(`${base}/price/${id}`).then(r => r.ok ? r.json() : null)
+
+        const results = await Promise.all(
+            content.map(async (saved) => {
+                const position = await fetchPosition(saved.id)
+                if (!position) {
+                    return {
+                        ...saved,
+                        price: saved.price ?? 0,
+                        oldPrice: saved.oldPrice ?? saved.price,
+                        count: saved.count ?? 0,
+                        favorite: saved.favorite ?? false
+                    }
+                }
+                position.category = position.category || saved.category || "perfume"
+                position.count = saved.count ?? 0
+                position.favorite = saved.favorite ?? false
+                if (saved.oldPrice != null) position.oldPrice = saved.oldPrice
+                else if (position.oldPrice == null) position.oldPrice = position.price
+                return position
+            })
+        )
+        results.forEach(position => {
+            this.positions[position.id] = new Good(this, position)
         })
-
-        return false;
     }
 
     async sendOrder ()

@@ -1,203 +1,179 @@
-import { reactive, ref, watch } from 'vue'
+import { reactive } from 'vue'
 import env from "./_config"
 import Basket from './basket'
 
+/** Поиск через серверное API */
+function fetchSearch(query, page = 1, perPage = 50, sort = '') {
+  const base = (env.server || '').replace(/\/$/, '')
+  const q = (query || '').trim()
+  let url = `${base}/price/search?q=${encodeURIComponent(q)}&page=${page}&per_page=${perPage}`
+  if (sort) url += `&sort=${encodeURIComponent(sort)}`
+  return fetch(url).then(r => r.json())
+}
 
-const defaultCategory = "perfume"
+/** Новинки при пустом поиске */
+function fetchNovelty(page = 1, perPage = 50, sort = '') {
+  const base = (env.server || '').replace(/\/$/, '')
+  let url = `${base}/price/novelty?page=${page}&per_page=${perPage}`
+  if (sort) url += `&sort=${encodeURIComponent(sort)}`
+  return fetch(url).then(r => r.json())
+}
 
-let file = (name, type = "text") => fetch(`${env.server}price/file/${name}`)
-    .then(resposne => {
-        return resposne[type]();
-    });
+class Catalog {
+  constructor() {
+    this.basket = new Basket(this)
+    this._reqest = ""
+    this.updateRoute = () => {}
 
+    this._sortBy = 'price_asc'
+    this.AbsMatchedGood = false
+    this.goods = reactive([])
+    this.searchLoading = false
+    this.searchTotal = 0
+    this.searchPage = 1
+    this.searchPerPage = 50
+  }
 
-let getPrice = () => fetch(`${env.server}price`)
-    .then(resposne => {
-        return resposne["json"]();
-    });
-  
+  get sortBy() {
+    return this._sortBy
+  }
 
-// test
+  set sortBy(value) {
+    this._sortBy = value || 'price_asc'
+    this._refreshGoods()
+  }
 
-// const price_data = await import('../../_price.json');
-// const price = await file(`${search.category}.json`, "json")
+  get search() {
+    return this._reqest
+  }
 
-class Catalog
-{
-    constructor()
-    {   
-        this._categories = [
-            {name: "Парфюмерия", file: "perfume"},
-            // {name: "Корейская косметика", file: "korea"},
-            // {name: "Косметика для волос", file: "hair"},
-        ]
+  set search(reqest) {
+    this._reqest = reqest
+    this.updateRoute(reqest)
+  }
 
-        this.prices = reactive({})
-        this.basket = new Basket(this)
+  /** Для совместимости с UI; данные только через API */
+  get positions() {
+    return []
+  }
 
-        this._category = defaultCategory
-        this._reqest = ""
-        this.updateRoute = () => {}
-
-        this._enableOtlivants = true
-
-        this.AbsMatchedGood = false
-        this.goods = reactive([])
-        this.loading = ref(true) 
-        
-        this._refreshPrice()
-        watch(this.prices, () => {
-            this.loading.value != undefined ? this.loading.value = true : this.loading = true
-            setTimeout(() => {
-                this.loading.value != undefined ? this.loading.value = false : this.loading = false
-                this._refreshGoods()
-            }, 10)
+  _refreshGoods() {
+    this.AbsMatchedGood = false
+    if (this.search.length > 2) {
+      const query = this.search.trim()
+      this.searchPage = 1
+      this.searchLoading = true
+      fetchSearch(query, 1, this.searchPerPage, this._sortBy)
+        .then((data) => {
+          const items = Array.isArray(data) ? data : (data.items ?? data.data ?? [])
+          this.searchTotal = data.total ?? items.length
+          const goodsList = items.map((position) => {
+            position.category = position.category || "perfume"
+            return this.basket.get(position)
+          })
+          this.goods = reactive(goodsList)
+          if (this.search.length >= 2 && goodsList.length > 0) {
+            const norm = (s) => (s || '').trim().toLowerCase().replace(/\s+/g, ' ')
+            const normQuery = norm(query)
+            const exact = goodsList.find((g) => norm(g.name) === normQuery)
+            this.AbsMatchedGood = exact || (goodsList.length === 1 ? goodsList[0] : false)
+          }
+        })
+        .catch((err) => {
+          console.error('Search API error:', err)
+          this.goods = reactive([])
+          this.searchTotal = 0
+        })
+        .finally(() => {
+          this.searchLoading = false
+        })
+    } else {
+      this.searchPage = 1
+      this.searchLoading = true
+      fetchNovelty(1, this.searchPerPage, this._sortBy)
+        .then((data) => {
+          const items = Array.isArray(data) ? data : (data.items ?? data.data ?? [])
+          this.searchTotal = data.total ?? items.length
+          const goodsList = items.map((position) => {
+            position.category = position.category || "perfume"
+            return this.basket.get(position)
+          })
+          this.goods = reactive(goodsList)
+        })
+        .catch((err) => {
+          console.error('Novelty API error:', err)
+          this.goods = reactive([])
+          this.searchTotal = 0
+        })
+        .finally(() => {
+          this.searchLoading = false
         })
     }
+  }
 
-    get enableOtlivants()
-    {
-        return this._enableOtlivants
-    }
-
-    set enableOtlivants(boolean)
-    {
-        this._enableOtlivants = boolean
-        this._refreshGoods()
-    }
-
-    get search()
-    {
-        return this._reqest
-    }
-
-    set search(reqest)
-    {
-        this._reqest = reqest
-        this.updateRoute(reqest)
-        this._refreshGoods()
-    }
-
-    get category()
-    {
-        return this._categories.find(category => category.file === this._category)
-    }
-
-    set category(name)
-    {
-        this._category = name
-        this._refreshPrice()    
-    }
-
-    get categories()
-    {
-        return this._categories.map(category => {
-            category.isActive = this._category === category.file
-            // category.open = () => {
-            //     this._category = category.file
-            //     this._refreshPrice()
-            // }
-            return category
+  loadMoreNovelty() {
+    if (this.search.length > 2 || this.searchLoading) return
+    if (this.goods.length >= this.searchTotal) return
+    const nextPage = this.searchPage + 1
+    this.searchLoading = true
+    fetchNovelty(nextPage, this.searchPerPage, this._sortBy)
+      .then((data) => {
+        const items = Array.isArray(data) ? data : (data.items ?? data.data ?? [])
+        const total = data.total
+        if (total != null) this.searchTotal = total
+        const newGoods = items.map((position) => {
+          position.category = position.category || "perfume"
+          return this.basket.get(position)
         })
-    }
+        this.goods.push(...newGoods)
+        this.searchPage = nextPage
+      })
+      .catch((err) => {
+        console.error('Novelty API load more error:', err)
+      })
+      .finally(() => {
+        this.searchLoading = false
+      })
+  }
 
-    get positions()
-    {
-        return this.prices[this._category]
-    }
-
-    load(categories)
-    {
-        let queue = []
-        categories.forEach(category => {
-            if (this.prices[category]===undefined)
-            {
-                this.prices[category] = []
-                queue.push(
-                    //getPrice().then(data => {
-                    file(`${category}.json`, "json").then(data => {
-                    this.prices[category] = data
-                }))         
-            }
+  loadMoreSearch() {
+    if (this.search.length <= 2 || this.searchLoading) return
+    if (this.goods.length >= this.searchTotal) return
+    const query = this.search.trim()
+    const nextPage = this.searchPage + 1
+    this.searchLoading = true
+    fetchSearch(query, nextPage, this.searchPerPage, this._sortBy)
+      .then((data) => {
+        const items = Array.isArray(data) ? data : (data.items ?? data.data ?? [])
+        const total = data.total
+        if (total != null) this.searchTotal = total
+        const newGoods = items.map((position) => {
+          position.category = position.category || "perfume"
+          return this.basket.get(position)
         })
-        return Promise.all(queue)
-    }
+        this.goods.push(...newGoods)
+        this.searchPage = nextPage
+      })
+      .catch((err) => {
+        console.error('Search API load more error:', err)
+      })
+      .finally(() => {
+        this.searchLoading = false
+      })
+  }
 
-    _refreshGoods()
-    {    
-        // console.log("qq") 
-        this.AbsMatchedGood = false
-        // console.log(`search > ${this.search}`)
-        if (this.search.length > 2) 
-        {
-            let response = []
-            let reqest = this.search.toUpperCase()
-            let query = reqest.split(' ')
-            
-            // console.log(`position > ${this.positions.length}`)
-            this.positions.forEach((position) => {
-                let positioinName = position.name.toUpperCase()
-                // console.log(positioinName,reqest)
-                if (positioinName !== reqest)
-                {
-                    let hasMismatch =  query.find(key => positioinName.indexOf(key) == -1)
-                    if (!hasMismatch)
-                    {
-                        if (this.filter(positioinName))
-                        {
-                            position.category = this._category
-                            response.push(this.basket.get(position))
-                        }
-                    }     
-                } else {
-                    this.AbsMatchedGood = this.basket.get(position)
-                } 
-            });
-        
-            this.goods = reactive(response)
-        }
-        else
-        {
-            this.goods = reactive([])
-        }
+  useRouter(router, currentReqest) {
+    this._reqest = currentReqest
+    this.updateRoute = (request) => {
+      if (request)
+        router.push({ query: { search: request } })
+      else
+        router.push({ query: {} })
     }
-
-    _refreshPrice()
-    {
-        // this.search = ""
-        this.loading.value != undefined ? this.loading.value = true : this.loading = true
-        this.load([this._category]).then(() => {
-            // this.loading.value != undefined ? this.loading.value = false : this.loading = false
-            // this._refreshGoods()
-        })
-    }
-
-    filter(positioinName)
-    {
-        return ((this._category != defaultCategory) || this.enableOtlivants || (positioinName.indexOf("ОТЛИВАНТ") == -1))
-    }
-
-    useRouter(router, currentReqest)
-    {
-        this._reqest = currentReqest
-        this.updateRoute = (request) => {
-            if (request)
-                router.push({query: {search: request}})
-            else
-                router.push({query: {}})
-        }
-        // this._refreshGoods()
-    }
+  }
 }
 
 const catalog = reactive(new Catalog())
-
-// price.load(["parfum", "otlivants"]).then(() => {
-//     price.load(["parfum", "otlivants"]).then(() => {
-//         console.log('ky')
-//     })
-// })
-
 
 export const basket = catalog.basket
 export default catalog

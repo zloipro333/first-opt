@@ -57,18 +57,11 @@ const router = createRouter({
 
 
 router.beforeEach((to, from) => {
-  // if (to.name === "wiki")
-  //   wiki.page = to.params.page
-  // if (to.query && to.query.search)    
-  let query = (to.query && to.query.search) ? to.query.search : ""
-  // else
-  if (catalog._reqest !== query)
-  {
+  if (to.name === 'catalog' || to.path === '/') {
+    const query = (to.query && to.query.search) ? to.query.search : ""
     catalog._reqest = query
     catalog._refreshGoods()
   }
-    
-    // catalog._reqest
   return true
 })
 

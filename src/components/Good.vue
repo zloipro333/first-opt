@@ -55,7 +55,10 @@ const vSelectByFocus = {
                     <div class="Good-titleCopy" :class="{show:isFocusTitle}" @click="copyDescription">
                         Копировать название
                     </div>
-                    {{positioin.name}}
+                    <div class="Good-title-content">
+                        <span class="Good-badge Good-badge--novelty" v-if="positioin.is_fresh">Новое</span>
+                        {{positioin.name}}
+                    </div>
                 </div>
                 <div class="Good-remove" v-if="positioin.inBasket" @click="positioin.remove()">✕</div>
             </div>
@@ -199,6 +202,25 @@ const vSelectByFocus = {
         {
             background: rgba(255, 255, 255, .1);
             border-radius: 3px 3px 3px 0;    
+        }
+    }
+
+    .Good-title-content { display: inline; }
+
+    .Good-badge
+    {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        margin-right: 6px;
+        vertical-align: middle;
+        &--novelty
+        {
+            background: rgb(255, 232, 175);
+            color: $color-interface-accent;
         }
     }
 

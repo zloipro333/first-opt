@@ -1,5 +1,7 @@
 export default {
     server: "https://fragrantica-store.online/",
+    /** Задержка (мс) перед отправкой поискового запроса после ввода */
+    searchDebounceMs: 400,
     // server: "",
     defaultWikiPage: "favorites",
     orderSales:[

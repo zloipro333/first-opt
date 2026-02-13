@@ -1,12 +1,9 @@
 <script setup>
-import * as v from 'vue'
-import { basket } from '../catalog.js';
+import { ref } from 'vue'
+import { basket } from '../catalog.js'
 import Logo from '../components/graphics/Logo.vue'
 import Search from '../components/Search.vue'
 import BasketIcon from "../components/graphics/BasketIcon.vue"
-import Loading from "../components/graphics/Loading.vue"
-import { ref } from 'vue';
-
 import Price from "../components/Price.vue"
 
 import catalog from '../catalog'
@@ -19,12 +16,7 @@ import { RouterLink } from 'vue-router'
 
 // const Price = v.defineAsyncComponent(() => import('../components/Price.vue'));
 
-//const search = v.reactive({reqest: ""})
 const viewBanner = ref(true)
-
-function find(value) {
-  search.reqest = value
-}
 
 </script>
 
@@ -63,14 +55,9 @@ function find(value) {
   </div>
 
  
-  <Search @request="find"/>
+  <Search />
   
-  <!-- Price -->
-  <div class="Catalog-loading" v-if="catalog.loading">
-    <Loading />
-      <div>Загружаем свежий прайс...</div>
-  </div>
-  <Price v-if="!catalog.loading"/>
+  <Price />
 
   <!-- basket button -->
   <div class="Catalog-basket" v-if="basket.all.length > 0">

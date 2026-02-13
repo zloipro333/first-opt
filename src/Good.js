@@ -14,6 +14,7 @@ class Good
         this.name = options.name
         this._price = options.price
         this.oldPrice = options.oldPrice !== options.price ? options.oldPrice : false
+        this.is_fresh = !!options.is_fresh
 
         this.category = options.category || "perfume"
 
