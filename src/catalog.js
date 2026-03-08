@@ -6,7 +6,7 @@ import Basket from './basket'
 function fetchSearch(query, page = 1, perPage = 50, sort = '') {
   const base = (env.server || '').replace(/\/$/, '')
   const q = (query || '').trim()
-  let url = `${base}/price/search?q=${encodeURIComponent(q)}&page=${page}&per_page=${perPage}`
+  let url = `${base}/price/api/search?q=${encodeURIComponent(q)}&page=${page}&per_page=${perPage}`
   if (sort) url += `&sort=${encodeURIComponent(sort)}`
   return fetch(url).then(r => r.json())
 }
@@ -14,7 +14,7 @@ function fetchSearch(query, page = 1, perPage = 50, sort = '') {
 /** Новинки при пустом поиске */
 function fetchNovelty(page = 1, perPage = 50, sort = '') {
   const base = (env.server || '').replace(/\/$/, '')
-  let url = `${base}/price/novelty?page=${page}&per_page=${perPage}`
+  let url = `${base}/price/api/novelty?page=${page}&per_page=${perPage}`
   if (sort) url += `&sort=${encodeURIComponent(sort)}`
   return fetch(url).then(r => r.json())
 }

@@ -159,7 +159,7 @@ export default class Basket
 
         const base = (env.server || '').replace(/\/$/, '')
         const fetchPosition = (id) =>
-            fetch(`${base}/price/${id}`).then(r => r.ok ? r.json() : null)
+            fetch(`${base}/price/api/${id}`).then(r => r.ok ? r.json() : null)
 
         const results = await Promise.all(
             content.map(async (saved) => {
