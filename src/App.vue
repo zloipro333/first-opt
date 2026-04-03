@@ -3,6 +3,7 @@ import { useRouter, useRoute, RouterView } from 'vue-router'
 import catalog from './catalog';
 import PriceModal from "./components/PriceModal.vue"
 import SaleModal from "./components/SaleModal.vue"
+import InfoModal from "./components/InfoModal.vue"
 
 const router = useRouter()
 const route = useRoute()
@@ -25,6 +26,7 @@ const VApp = {
   <div v-app>
     <PriceModal />
     <SaleModal />
+    <InfoModal />
 
     <RouterView />
 </div>

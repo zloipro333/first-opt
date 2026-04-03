@@ -13,36 +13,33 @@ import env from "../_config"
 import payment from '../payment'
 
 import { RouterLink } from 'vue-router'
+import { infoModal } from '../main'
 
 // const Price = v.defineAsyncComponent(() => import('../components/Price.vue'));
 
 const viewBanner = ref(true)
 
+const infoModalText = `
+  Добавили новый мессенджер Google Chat со всем необходимым функционалом, работает без и с VPN,  и есть веб-версия и приложение на разные устройства и ПО. <br>
+  Скачать ⏩ <br><a href="https://chat.google.com/download/" target="_blank" rel="noopener noreferrer">https://chat.google.com/download/</a><br><br>
+  После скачивания нажмите кнопку "Новый чат" и вставьте в строку поиска наш контакт ⏩<br>
+  <span style="cursor:pointer;text-decoration:underline;text-underline-offset:2px" title="Нажмите, чтобы скопировать" onclick="navigator.clipboard.writeText('a.timofeev.alexandr@gmail.com')">a.timofeev.alexandr@gmail.com</span>
+`
+
 </script>
 
 <template>
   <div style="max-width: calc(100vw - 32px);">
-  <!-- 
+
   <div style="height: 80px;" v-if="viewBanner"></div>
   <div class="Catalog-banner" v-if="viewBanner">
     <div class="Catalog-banner-close" @click="viewBanner=false">✕</div>
-    <h2>‼️ Мы ушли в отпуск ‼️</h2>
-    До 6 октября без связи, заказы не принимаются.<br>
-С 6 октября в обычном режиме
-  </div> -->
+    Добавили новый <br>мессенджер <a @click="infoModal.open(infoModalText, 'Дорогие Партнеры,')">
+      Google Chat
+    </a>.<br>
+    Работает без VPN ✅
+  </div>
 
-    <!-- <div style="height: 8px;"></div>
-    C 19.04.2024 по 12.05.2024 не принимаем и не отгружаем заказы.
-    <div style="height: 8px;"></div>
-    13.05.2024 возобновим работу в обычном режиме. 
-    
-    <h2>⚠️ Внимание</h2>
-    Мы собираемся в отпуск.<br>
-    Пожалуйста, ознакомьтесь с <a href="https://t.me/c/1656960287/2452">информацией</a> в канале!
-    
-    -->
-  <!-- </div> -->
-<!-- @click='catalog.search = ""' -->
   <div class="Catalog-header">
     <RouterLink to='/' style="background: none;" > 
       <Logo @click='catalog.search = ""'/>
@@ -124,11 +121,16 @@ const viewBanner = ref(true)
     width: 300px;
     left: 50%;
     margin-left: -150px;
-    background: #ffd92f;
-    color: #111;
+    background: #e75a4c;
+    color: #fff;
     border-radius: 8px;
     padding: 6px 12px;
-    
+
+    a {
+      color: #fff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
   .Catalog-banner-close
   {
