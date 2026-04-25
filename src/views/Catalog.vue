@@ -13,31 +13,22 @@ import env from "../_config"
 import payment from '../payment'
 
 import { RouterLink } from 'vue-router'
-import { infoModal } from '../main'
 
 // const Price = v.defineAsyncComponent(() => import('../components/Price.vue'));
 
 const viewBanner = ref(true)
-
-const infoModalText = `
-  Добавили новый мессенджер Google Chat со всем необходимым функционалом, работает без и с VPN,  и есть веб-версия и приложение на разные устройства и ПО. <br>
-  Скачать ⏩ <br><a href="https://chat.google.com/download/" target="_blank" rel="noopener noreferrer">https://chat.google.com/download/</a><br><br>
-  После скачивания нажмите кнопку "Новый чат" и вставьте в строку поиска наш контакт ⏩<br>
-  <span style="cursor:pointer;text-decoration:underline;text-underline-offset:2px" title="Нажмите, чтобы скопировать" onclick="navigator.clipboard.writeText('a.timofeev.alexandr@gmail.com')">a.timofeev.alexandr@gmail.com</span>
-`
 
 </script>
 
 <template>
   <div style="max-width: calc(100vw - 32px);">
 
-  <div style="height: 80px;" v-if="viewBanner"></div>
+  <div style="height: 100px;" v-if="viewBanner"></div>
   <div class="Catalog-banner" v-if="viewBanner">
     <div class="Catalog-banner-close" @click="viewBanner=false">✕</div>
-    Добавили новый <br>мессенджер <a @click="infoModal.open(infoModalText, 'Дорогие Партнеры,')">
-      Google Chat
-    </a>.<br>
-    Работает без VPN ✅
+    ⚠️ Дорогие партнеры, мы уходим в отпуск.<br>
+    <b>Последний день приема заказов (до 13:00), отгрузки и оплат — 28.04.2026</b>
+    <br>Возобновим работу с 12.05.2026
   </div>
 
   <div class="Catalog-header">
@@ -118,9 +109,9 @@ const infoModalText = `
     position: fixed;
     z-index: 100;
     top: 12px;
-    width: 300px;
+    width: 360px;
     left: 50%;
-    margin-left: -150px;
+    margin-left: -180px;
     background: #e75a4c;
     color: #fff;
     border-radius: 8px;
@@ -130,6 +121,9 @@ const infoModalText = `
       color: #fff;
       text-decoration: underline;
       cursor: pointer;
+    }
+    b {
+      font-weight: 600;
     }
   }
   .Catalog-banner-close
