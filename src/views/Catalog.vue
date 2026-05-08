@@ -23,13 +23,13 @@ const viewBanner = ref(true)
 <template>
   <div style="max-width: calc(100vw - 32px);">
 
-  <div style="height: 100px;" v-if="viewBanner"></div>
+  <!-- <div style="height: 100px;" v-if="viewBanner"></div>
   <div class="Catalog-banner" v-if="viewBanner">
     <div class="Catalog-banner-close" @click="viewBanner=false">✕</div>
     ⚠️ Дорогие партнеры, мы уходим в отпуск.<br>
     <b>Последний день приема заказов (до 13:00), отгрузки и оплат — 28.04.2026</b>
     <br>Возобновим работу с 12.05.2026
-  </div>
+  </div> -->
 
   <div class="Catalog-header">
     <RouterLink to='/' style="background: none;" > 
