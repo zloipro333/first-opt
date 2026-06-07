@@ -1,8 +1,8 @@
 export default {
-    server: "https://fragrantica-store.online/",
+    server: "https://price-fts-beta.onrender.com",
     /** Задержка (мс) перед отправкой поискового запроса после ввода */
     searchDebounceMs: 400,
-    // server: "",
+    // server: "https://fragrantica-store.online/",
     defaultWikiPage: "favorites",
     orderSales:[
         {amount: 500, sale: 0.6},
