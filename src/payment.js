@@ -1,12 +1,12 @@
 import { reactive } from "vue"
 import env from "./_config"
 
-const file = (name, type = "text") => fetch(`${env.server}${name}`)
+const file = (name, type = "text") => fetch(`${env.server}/${name}`)
     .then(resposne => {
         return resposne[type]();
     });
 
-let getConfig = () => fetch(`${env.server}config`)
+let getConfig = () => fetch(`${env.server}/config`)
     .then(resposne => {
         return resposne["json"]();
     });
@@ -95,16 +95,11 @@ class Payment
 
     loadMethods(callback)
     {
-        // подтягиваем конфиги
-        //getConfig().then(config => {
-        file("app", "json").then(config => {
-            // подтягиваем логику
-            import(/* @vite-ignore */`${env.server}/module/first-opt.js`).then(module => { 
-                // отдаем готовые методы на обработку
-                // console.Console.log(module.getPaymentMethods(config))
-                callback(module.getPaymentMethods(config))
-                
-            })
+        Promise.all([
+            fetch(`${env.server}/app`).then(r => r.json()),
+            import(/* @vite-ignore */`${env.server}/module/first-opt.js`)
+        ]).then(([config, module]) => {
+            callback(module.getPaymentMethods(config))
         })
     }
 }

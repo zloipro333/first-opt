@@ -38,7 +38,7 @@ const viewBanner = ref(true)
 
     <div class="Catalog-menu">
       <a class="button" href="#" @click="priceModal.open()">Cпособ оплаты</a> •
-      <a class="button" :href="`${env.server}price/file/first-opt_${payment.currentMethod.name}.xlsx`">Скачать прайс</a>
+      <a class="button" v-if="payment.currentMethod" :href="`${env.server}/price/file/first-opt_${payment.currentMethod.name}.xlsx`">Скачать прайс</a>
     </div> 
   </div>
 
