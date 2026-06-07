@@ -1,16 +1,5 @@
 import { reactive } from "vue"
-import env from "./_config"
-
-const file = (name, type = "text") => fetch(`${env.server}/${name}`)
-    .then(resposne => {
-        return resposne[type]();
-    });
-
-let getConfig = () => fetch(`${env.server}/config`)
-    .then(resposne => {
-        return resposne["json"]();
-    });
-
+import { serverUrl } from "./_config"
 
 class PaymentMethod
 {
@@ -95,9 +84,12 @@ class Payment
 
     loadMethods(callback)
     {
+        const appUrl = serverUrl('app')
+        const moduleUrl = serverUrl('module/first-opt.js')
+
         Promise.all([
-            fetch(`${env.server}/app`).then(r => r.json()),
-            import(/* @vite-ignore */`${env.server}/module/first-opt.js`)
+            fetch(appUrl).then(r => r.json()),
+            import(/* @vite-ignore */ moduleUrl)
         ]).then(([config, module]) => {
             callback(module.getPaymentMethods(config))
         })

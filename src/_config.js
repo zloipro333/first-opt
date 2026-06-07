@@ -1,4 +1,4 @@
-export default {
+const config = {
     server: "https://price-fts-beta.onrender.com",
     /** Задержка (мс) перед отправкой поискового запроса после ввода */
     searchDebounceMs: 400,
@@ -77,3 +77,11 @@ export default {
         },
     ]
 }
+
+export function serverUrl(path = '') {
+    const base = (config.server || '').replace(/\/$/, '')
+    if (!path) return base
+    return `${base}/${String(path).replace(/^\//, '')}`
+}
+
+export default config

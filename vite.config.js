@@ -8,6 +8,9 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   //server: { https: true }, // Not needed for Vite 5+
+  build: {
+    modulePreload: false,
+  },
   //plugins: [ mkcert(), vue() ],
   plugins: [ 
     vue(),

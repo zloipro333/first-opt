@@ -9,7 +9,7 @@ import Price from "../components/Price.vue"
 import catalog from '../catalog'
 
 import { priceModal } from '../Good';
-import env from "../_config"
+import { serverUrl } from "../_config"
 import payment from '../payment'
 
 import { RouterLink } from 'vue-router'
@@ -38,7 +38,7 @@ const viewBanner = ref(true)
 
     <div class="Catalog-menu">
       <a class="button" href="#" @click="priceModal.open()">Cпособ оплаты</a> •
-      <a class="button" v-if="payment.currentMethod" :href="`${env.server}/price/file/first-opt_${payment.currentMethod.name}.xlsx`">Скачать прайс</a>
+      <a class="button" v-if="payment.currentMethod" :href="serverUrl(`price/file/first-opt_${payment.currentMethod.name}.xlsx`)">Скачать прайс</a>
     </div> 
   </div>
 
